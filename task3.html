@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylish Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #calculator {
+            background-color: #343a40;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            width: 300px;
+        }
+
+        #display {
+            color: white;
+            font-size: 2em;
+            padding: 10px;
+            text-align: right;
+        }
+
+        #buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 16px;
+        }
+
+        button {
+            background-color: #495057;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        button:hover {
+            background-color: #343a40;
+        }
+
+        button.operator {
+            background-color: #007bff;
+        }
+
+        button.operator:hover {
+            background-color: #0056b3;
+        }
+
+        button.double {
+            grid-column: span 2;
+        }
+
+        button.clear {
+            background-color: #dc3545;
+        }
+
+        button.clear:hover {
+            background-color: #bd2130;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="calculator">
+        <div id="display">0</div>
+        <div id="buttons">
+            <button>7</button>
+            <button>8</button>
+            <button>9</button>
+            <button class="operator">/</button>
+            <button>4</button>
+            <button>5</button>
+            <button>6</button>
+            <button class="operator">*</button>
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+            <button class="operator">-</button>
+            <button class="double">0</button>
+            <button>.</button>
+            <button class="operator double">+</button>
+            <button class="operator clear double">C</button>
+            <button class="operator equal double">=</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const display = document.getElementById('display');
+            const buttons = document.getElementById('buttons');
+
+            let currentInput = '';
+            let operator = '';
+            let previousInput = '';
+
+            buttons.addEventListener('click', function (e) {
+                const target = e.target;
+
+                if (target.matches('button')) {
+                    const buttonText = target.textContent;
+
+                    if (!isNaN(buttonText) || buttonText === '.') {
+                        currentInput += buttonText;
+                    } else if (buttonText === 'C') {
+                        currentInput = '';
+                        previousInput = '';
+                        operator = '';
+                    } else if (buttonText === '=') {
+                        if (currentInput !== '') {
+                            currentInput = calculate(operator, parseFloat(previousInput), parseFloat(currentInput)).toString();
+                            operator = '';
+                            previousInput = '';
+                        }
+                    } else {
+                        if (currentInput !== '') {
+                            if (previousInput !== '') {
+                                previousInput = calculate(operator, parseFloat(previousInput), parseFloat(currentInput)).toString();
+                                currentInput = '';
+                            } else {
+                                previousInput = currentInput;
+                                currentInput = '';
+                            }
+                        }
+                        operator = buttonText;
+                    }
+
+                    display.textContent = currentInput || '0';
+                }
+            });
+
+            function calculate(operator, num1, num2) {
+                switch (operator) {
+                    case '+':
+                        return num1 + num2;
+                    case '-':
+                        return num1 - num2;
+                    case '*':
+                        return num1 * num2;
+                    case '/':
+                        return num1 / num2;
+                    default:
+                        return num2;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
